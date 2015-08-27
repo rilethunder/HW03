@@ -1,7 +1,7 @@
 HW03 — TextGame (deadline: 2015-09-03)
 ===
 
-Write a 2-player text-based token skipping game.
+Write a 2-player text-based token skipping game. It has to be done in C++
 
 Mechanics
 ====
