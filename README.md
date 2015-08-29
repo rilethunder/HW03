@@ -6,7 +6,7 @@ Write a 2-player text-based token skipping game. It has to be done in C++
 Mechanics
 ====
 
-* The board has is one-dimension `n` cells. So a 10-board looks like this:
+* The board has is one-dimension `n` > 1 cells. So a 10-board looks like this:
 ```
   +-+-+-+-+-+-+-+-+-+-+
   |@| | | | | | | | | |
@@ -27,6 +27,7 @@ and the player moves by 3 spaces, the token will end up as
   | | | | | | | | |@| |
   +-+-+-+-+-+-+-+-+-+-+
 ```
+* At every round, the program asks for `n`, `a`, and `b`.
 
 Example
 ====
