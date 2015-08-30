@@ -4,8 +4,8 @@
 * Contains the main method.
 */
 #include <iostream>
-#include "Game.cpp"
 using namespace std;
+#include "Game.h"
 
 /*
 *main
@@ -14,5 +14,6 @@ using namespace std;
 */
 int main()
 {
-	
+	start();
+	return 0;
 }
