@@ -1,2 +1,2 @@
-Process of game
- Runner.cpp --> Game.cpp
+To run it manually:
+g++ Runner.cpp Game.cpp -o (output exe name)
