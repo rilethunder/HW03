@@ -70,18 +70,18 @@ player turn(player &a, player &b)
 */
 int makeField(int &a, int pos)
 {
-	for (int i =0; i < a; i++)
+	for (int i =1; i < a + 1; ++i)
 	{
 		cout << "+-";
 	}
 	cout << "+\n";
-	for (int i =0; i < a; i++)
+	for (int i =1; i < a + 1; ++i)
 	{
 		if(i == pos) cout << "|@";
 		else cout << "| ";
 	}
 	cout << "|\n";
-	for (int i =0; i < a; i++)
+	for (int i =1; i < a + 1; ++i)
 	{
 		cout << "+-";
 	}
@@ -100,7 +100,7 @@ int move(int &pos, int &fields)
 {
 	if(pos >= fields)
 		{
-			if ((pos - fields) >= fields) return 0; // if the difference of the position and the max number of cells, then the token goes back to start
+			if ((pos - fields) >= fields) return 1; // if the difference of the position and the max number of cells, then the token goes back to start
 			else
 			{
 				pos = fields - (pos - fields); //otherwise, rebound
@@ -120,7 +120,7 @@ int move(int &pos, int &fields)
 */
 int start()
 {
-	int fields, inc, rang1, rang2, newpos;
+	int fields, inc, rang1, rang2, newpos, goal;
 	string p1, p2;
 	player now;
 	cout << "Enter the number of cells for this round: ";
@@ -132,11 +132,12 @@ int start()
 	cin >> p1;
 	cout << "Name for Player 2: ";
 	cin >> p2;
+	goal = fields - 1;
 	player a, b;
 	a.init(1, p1);
 	b.init(0, p2);
-	int pos = makeField(fields, 0); //initialization, 0 is the starting point
-	while (pos != fields - 1)
+	int pos = makeField(fields, 1); //initialization, 0 is the starting point
+	while (pos != fields)
 	{
 		now = turn(a, b);
 		cout << now.name << "'s turn: ";
@@ -153,7 +154,7 @@ int start()
 		newpos = pos + inc;
 		pos = move(newpos, fields);
 	}
-	if(pos == fields - 1) // fields - 1, given on how array-counting works
+	if(pos == fields) // fields - 1, given on how array-counting works
 	{
 		cout << now.name << " wins!";
 	}
