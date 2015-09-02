@@ -86,6 +86,8 @@ int makeField(int &a, int pos)
 		cout << "+-";
 	}
 	cout << "+\n";
+	
+	cout << "Pos: " <<	+ pos << "\n";
 	return pos;
 }
 
@@ -93,23 +95,48 @@ int makeField(int &a, int pos)
 * This function checks for any rebounds, and recalculates them to accommodate said rebound, and also redraws the field
 * @ param &pos refers to the position given, normally with the player increment input added
 * @ param &fields refers to the number of cells for the given round, input by the player
+* @ param inc refers to the increment given by players
 * Has a call function of makeField
 */
 
-int move(int &pos, int &fields)
+int move(int pos, int &fields, int inc)
 {
-	if(pos >= fields)
+	int newinc = inc;
+	int end = 0;
+	int start = 0;
+	if((pos + inc) > fields)
+	{
+		newinc = newinc - (fields - pos);
+		end = 1;
+		while(pos + newinc > fields)
 		{
-			if ((pos - fields) >= fields) return 1; // if the difference of the position and the max number of cells, then the token goes back to start
-			else
+			if(pos + newinc <= fields && pos + newinc >= 1)
 			{
-				pos = fields - (pos - fields); //otherwise, rebound
+				return makeField(fields, pos + newinc);
+			}
+			if(end)
+			{
+				newinc = newinc - (fields -1);
+				start = 1;
+				end = 0;
+			}
+			else if(start)
+			{
+				newinc = newinc - (fields- 1);
+				end = 1;
+				start = 0;
 			}
 		}
-		return makeField(fields, pos);
+		if(pos + newinc <= fields && pos + newinc >= 1)
+		{
+				return makeField(fields, pos + newinc);
+		}
+	}
+	else
+	{
+		return makeField(fields, pos+inc);
+	}	
 }
-
-
 /*
 * The is the "main" method, where the sequence of the game will be coded
 * This is also where all inputs will be processed
@@ -123,20 +150,15 @@ int start()
 	int fields, inc, rang1, rang2, newpos, goal;
 	string p1, p2;
 	player now;
-	cout << "Enter the number of cells for this round: ";
 	cin >> fields;
-	cout << "Enter the allowable movement range for the game;Minimum, followed by maximum: ";
 	cin >> rang1;
 	cin >>rang2;
-	cout << "Name for Player 1: ";
-	cin >> p1;
-	cout << "Name for Player 2: ";
-	cin >> p2;
-	goal = fields - 1;
+	p1 = "a";
+	p2 = "b";
 	player a, b;
 	a.init(1, p1);
 	b.init(0, p2);
-	int pos = makeField(fields, 1); //initialization, 0 is the starting point
+	int pos = makeField(fields, 1); //initialization, 1 is the starting point
 	while (pos != fields)
 	{
 		now = turn(a, b);
@@ -151,8 +173,7 @@ int start()
 				cin >> inc;
 			}
 		}
-		newpos = pos + inc;
-		pos = move(newpos, fields);
+		pos = move(pos, fields, inc);
 	}
 	if(pos == fields) // fields - 1, given on how array-counting works
 	{
