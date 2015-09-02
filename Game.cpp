@@ -104,7 +104,7 @@ int move(int pos, int &fields, int inc)
 	int newinc = inc;
 	int end = 0;
 	int start = 0;
-	if((pos + inc) > fields)
+	if((pos + inc) - fields > fields)
 	{
 		newinc = newinc - (fields - pos);
 		end = 1;
@@ -131,6 +131,11 @@ int move(int pos, int &fields, int inc)
 		{
 				return makeField(fields, pos + newinc);
 		}
+	}
+	else if(pos + inc > fields)
+	{
+		pos = fields - ((pos + inc) - fields);
+		reutnr makeField(fields, pos);
 	}
 	else
 	{
