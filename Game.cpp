@@ -151,15 +151,15 @@ int move(int pos, int &fields, int inc)
 	if(goingRight)
 	{
 		if(det%2==0)
-			return makeFields(fields,fields-dif);
-		return makeFields(fields,dif);
+			return makeField(fields,fields-dif);
+		return makeField(fields,dif);
 		
 	}
 	else
 	{
 		if(det%2==0)
-			return makeFields(fields,dif);
-		return makeFields(fields,fields-dif);
+			return makeField(fields,dif);
+		return makeField(fields,fields-dif);
 	}
 }
 /*
