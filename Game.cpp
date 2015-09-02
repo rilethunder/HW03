@@ -101,6 +101,7 @@ int makeField(int &a, int pos)
 
 int move(int pos, int &fields, int inc)
 {
+	/*
 	int newinc = inc;
 	int end = 0;
 	int start = 0;
@@ -135,7 +136,31 @@ int move(int pos, int &fields, int inc)
 	else
 	{
 		return makeField(fields, pos+inc);
-	}	
+	}
+	*/
+	bool goingRight=true;
+	if(inc<0)
+	{
+		goingRight=false;
+		inc=-inc;
+	}
+		
+	int det,dif;
+	det=inc/fields;
+	dif=inc-fields*det;
+	if(goingRight)
+	{
+		if(det%2==0)
+			return makeFields(fields,fields-dif);
+		return makeFields(fields,dif);
+		
+	}
+	else
+	{
+		if(det%2==0)
+			return makeFields(fields,dif);
+		return makeFields(fields,fields-dif);
+	}
 }
 /*
 * The is the "main" method, where the sequence of the game will be coded
@@ -147,7 +172,7 @@ int move(int pos, int &fields, int inc)
 */
 int start()
 {
-	int fields, inc, rang1, rang2, newpos, goal;
+	int fields, inc, rang1, rang2, newpos, goal,spec[];//spec is the array that contains the special numbers
 	string p1, p2;
 	player now;
 	cin >> fields;
@@ -159,6 +184,7 @@ int start()
 	a.init(1, p1);
 	b.init(0, p2);
 	int pos = makeField(fields, 1); //initialization, 1 is the starting point
+	
 	while (pos != fields)
 	{
 		now = turn(a, b);
@@ -174,11 +200,14 @@ int start()
 			}
 		}
 		pos = move(pos, fields, inc);
+		
+		if(spec[pos]!=0)
+			pos=move(pos,fields,spec[pos]);
 	}
-	if(pos == fields) // fields - 1, given on how array-counting works
-	{
+	//if(pos == fields) // fields - 1, given on how array-counting works
+	//{
 		cout << now.name << " wins!";
-	}
+	//}
 	return 0;
 }
 
