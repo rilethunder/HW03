@@ -146,8 +146,8 @@ int move(int pos, int &fields, int inc)
 	}
 		
 	int det,dif;
-	det=inc/fields;
-	dif=inc-fields*det;
+	det=(pos+inc-1)/fields;
+	dif=(pos+inc-1)-fields*det;
 	if(goingRight)
 	{
 		if(det%2==0)
