@@ -7,6 +7,9 @@
 #include <iostream>
 #include <string>
 #include "Game.h"
+#include <stdlib.h>
+#include <time.h>
+
 
 using namespace std;
 
@@ -41,6 +44,77 @@ public:
 };
 
 /*
+*	set an array of a given size such the array will contains "additional steps"
+*	special numbers that will not allow two adjacent special numbers, and will not allow
+*	chain jumping
+*
+*	@param int* generated - the pointer to the address of the first element of the array
+*	@param int size - size of the array
+*/
+
+void generateNumbers(int* generated, int size){
+	for(int i=0; i<size; i++)
+		generated[i] = 0;
+	
+	bool checker[size];
+	bool landable[size];
+	for(int i=0; i<size; i++){
+		checker[i] = false;
+		landable[i] = true;
+	}
+	int numOfGen = size;
+	while(numOfGen>2){
+		int next = rand()%(size-2)+1;
+		if(checker[next]==true)
+			continue;
+		landable[next] = false;
+		checker[next] = true;
+		while(1){
+			generated[next] = (rand()%19);
+			generated[next] -= 9;
+			int landing = next;
+			int moves = generated[next];
+			bool forward = moves>0;
+			
+			if(moves==0)
+				continue;
+			if(moves<0)
+				moves = -moves;
+			
+			while(moves)
+			{
+				if(forward){
+					landing++;
+					if(landing==size-1)
+						forward = false;
+				} else {
+					landing--;
+					if(landing==0)
+						forward = true;
+				}
+				moves--;
+			}
+			
+			if(landable[landing]){
+				checker[landing] = true;
+				numOfGen--;
+				break;
+			}
+		}
+		numOfGen--;
+		
+		if(next-1>=0 && !checker[next-1]){
+			checker[next-1] = true;
+			numOfGen--;
+		}
+		if(next+1<size && !checker[next+1]){
+			checker[next+1] = true;
+			numOfGen--;
+		}
+	}
+}
+
+/*
 * Determines whose turn it will be, and returns that player
 *@ param player &a , player &b the players to be compared, using references
 *
@@ -68,26 +142,38 @@ player turn(player &a, player &b)
 * @ parameter &a refers to the address of the given int
 * @ parameter pos refers to the position of the token
 */
-int makeField(int &a, int pos)
+int makeField(int &a, int pos, int nums[])
 {
 	for (int i =1; i < a + 1; ++i)
 	{
-		cout << "+-";
+		cout << "+---";
 	}
 	cout << "+\n";
-	for (int i =1; i < a + 1; ++i)
+	for (int i=1; i < a + 1; i++)
 	{
-		if(i == pos) cout << "|@";
-		else cout << "| ";
+		if(i== pos)
+		{
+			cout << "| @ ";
+		}
+		else if(nums[i-1]!=0)
+		{
+			cout<<"|";
+			if(nums[i-1]>=0)
+			{
+				cout<<" ";
+			}
+			cout<<nums[i-1]<<" ";
+		}
+		else cout << "|   ";
 	}
 	cout << "|\n";
 	for (int i =1; i < a + 1; ++i)
 	{
-		cout << "+-";
+		cout << "+---";
 	}
 	cout << "+\n";
 	
-	cout << "Pos: " <<	+ pos << "\n";
+	//cout << "Pos: " <<	+ pos << "\n";
 	return pos;
 }
 
@@ -112,7 +198,9 @@ int move(int pos, int &fields, int inc)
 		{
 			if(pos + newinc <= fields && pos + newinc >= 1)
 			{
-				return makeField(fields, pos + newinc);
+				return pos+newinc;
+				
+				//return makeField(fields, pos + newinc);
 			}
 			if(end)
 			{
@@ -127,20 +215,22 @@ int move(int pos, int &fields, int inc)
 				start = 0;
 			}
 		}
+		
 		if(pos + newinc <= fields && pos + newinc >= 1)
 		{
-				return makeField(fields, pos + newinc);
+			return pos+newinc;
 		}
 	}
+	
 	else if(pos + inc > fields)
 	{
 		pos = fields - ((pos + inc) - fields);
-		reutnr makeField(fields, pos);
+		return pos;
 	}
 	else
 	{
-		return makeField(fields, pos+inc);
-	}	
+		return pos+inc;
+	}
 }
 /*
 * The is the "main" method, where the sequence of the game will be coded
@@ -152,10 +242,16 @@ int move(int pos, int &fields, int inc)
 */
 int start()
 {
-	int fields, inc, rang1, rang2, newpos, goal;
+	int inc, rang1, rang2, newpos, goal,fields;
 	string p1, p2;
 	player now;
 	cin >> fields;
+	int nums[fields];
+	srand(time(NULL));
+	generateNumbers(&nums[0],fields);
+	//for(int i=0; i<fields; i++)
+	//	cout << nums[i] << " ";
+	//cout << "~~~~ \n";
 	cin >> rang1;
 	cin >>rang2;
 	p1 = "a";
@@ -163,7 +259,9 @@ int start()
 	player a, b;
 	a.init(1, p1);
 	b.init(0, p2);
-	int pos = makeField(fields, 1); //initialization, 1 is the starting point
+	
+	int pos = 1; //initialization, 1 is the starting point
+	makeField(fields,pos,nums);
 	while (pos != fields)
 	{
 		now = turn(a, b);
@@ -179,6 +277,45 @@ int start()
 			}
 		}
 		pos = move(pos, fields, inc);
+		if(nums[pos-1]!=0)
+		{
+			// if(nums[pos-1]<0)
+			// {
+				// cout<<"blabla\n";
+				// pos=move(pos,fields,-nums[pos-1]+2*(fields-pos));
+			// }
+			// else
+			// {
+				// pos=move(pos,fields,nums[pos-1]);
+			// }
+			
+			bool back = (nums[pos-1]<0);
+			int movement = nums[pos-1];
+			if(back) movement = -movement;
+			int inc = 0;
+			int simPos = pos;
+			while(movement){
+				if(!back)
+				{
+					simPos++;
+					inc++;
+					if(simPos-1==fields-1)
+					{
+						back = true;
+					}
+				}else
+				{
+					simPos--;
+					inc--;
+					if(simPos-1==0){
+						back = false;
+					}
+				}
+				movement--;
+			}
+			pos = simPos;
+		}
+		makeField(fields,pos,nums);
 	}
 	if(pos == fields) // fields - 1, given on how array-counting works
 	{
